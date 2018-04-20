@@ -16,10 +16,13 @@ use boxed::BoxPredicate;
 /// mean that the evaluated item is in some sort of pre-defined set.  This is
 /// different from `Ord` and `Eq` in that an `item` will almost never be the
 /// same type as the implementing `Predicate` type.
-pub trait Predicate<Item: ?Sized> {
+pub trait Predicate<Item>
+where
+    Item: Copy,
+{
     /// Execute this `Predicate` against `variable`, returning the resulting
     /// boolean.
-    fn eval(&self, variable: &Item) -> bool;
+    fn eval(&self, variable: Item) -> bool;
 
     /// Compute the logical AND of two `Predicate` results, returning the result.
     ///

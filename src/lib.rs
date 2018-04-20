@@ -63,14 +63,14 @@
 //! // usual combinators of the `Predicate` trait to work!
 //! struct IsTheAnswer;
 //! impl Predicate<i32> for IsTheAnswer {
-//!     fn eval(&self, variable: &i32) -> bool {
-//!         *variable == 42
+//!     fn eval(&self, variable: i32) -> bool {
+//!         variable == 42
 //!     }
 //! }
 //!
-//! assert_eq!(true, IsTheAnswer.eval(&42));
-//! let almost_the_answer = IsTheAnswer.or(predicate::contains(vec![41, 43]));
-//! assert_eq!(true, almost_the_answer.eval(&41));
+//! assert_eq!(true, IsTheAnswer.eval(42));
+//! let almost_the_answer = IsTheAnswer.or(predicate::contains(vec![41_i32, 43_i32]));
+//! assert_eq!(true, almost_the_answer.eval(41));
 //!
 //! // Any function over a reference to the desired `Item` that returns `bool`
 //! // can easily be made into a `Predicate` using the `predicate::function`
@@ -108,6 +108,6 @@ pub mod set;
 pub mod boolean;
 
 // specialized primitive `Predicate` types
-pub mod str;
-pub mod path;
-pub mod float;
+//pub mod str;
+//pub mod path;
+//pub mod float;

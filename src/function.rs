@@ -17,7 +17,8 @@ use Predicate;
 #[derive(Debug)]
 pub struct FnPredicate<F, T>
 where
-    F: Fn(&T) -> bool,
+    F: Fn(T) -> bool,
+    T: Copy,
 {
     function: F,
     _phantom: PhantomData<T>,
@@ -25,9 +26,10 @@ where
 
 impl<F, T> Predicate<T> for FnPredicate<F, T>
 where
-    F: Fn(&T) -> bool,
+    F: Fn(T) -> bool,
+    T: Copy,
 {
-    fn eval(&self, variable: &T) -> bool {
+    fn eval(&self, variable: T) -> bool {
         (self.function)(variable)
     }
 }
@@ -56,7 +58,8 @@ where
 /// ```
 pub fn function<F, T>(function: F) -> FnPredicate<F, T>
 where
-    F: Fn(&T) -> bool,
+    F: Fn(T) -> bool,
+    T: Copy,
 {
     FnPredicate {
         function: function,

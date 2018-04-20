@@ -16,13 +16,19 @@ use Predicate;
 ///
 /// This is created by the `predicate::always` and `predicate::never` functions.
 #[derive(Debug)]
-pub struct BooleanPredicate<Item> {
+pub struct BooleanPredicate<Item>
+where
+    Item: Copy,
+{
     retval: bool,
     _phantom: PhantomData<Item>,
 }
 
-impl<Item> Predicate<Item> for BooleanPredicate<Item> {
-    fn eval(&self, _variable: &Item) -> bool {
+impl<Item> Predicate<Item> for BooleanPredicate<Item>
+where
+    Item: Copy,
+{
+    fn eval(&self, _variable: Item) -> bool {
         self.retval
     }
 }
@@ -41,7 +47,10 @@ impl<Item> Predicate<Item> for BooleanPredicate<Item> {
 /// // Won't work - Predicates can only operate on a single type
 /// // assert_eq!(true, predicate_fn.eval("hello"))
 /// ```
-pub fn always<Item>() -> BooleanPredicate<Item> {
+pub fn always<Item>() -> BooleanPredicate<Item>
+where
+    Item: Copy,
+{
     BooleanPredicate {
         retval: true,
         _phantom: PhantomData,
@@ -62,7 +71,10 @@ pub fn always<Item>() -> BooleanPredicate<Item> {
 /// // Won't work - Predicates can only operate on a single type
 /// // assert_eq!(false, predicate_fn.eval("hello"))
 /// ```
-pub fn never<Item>() -> BooleanPredicate<Item> {
+pub fn never<Item>() -> BooleanPredicate<Item>
+where
+    Item: Copy,
+{
     BooleanPredicate {
         retval: false,
         _phantom: PhantomData,

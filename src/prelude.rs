@@ -18,6 +18,7 @@ pub mod predicate {
     pub use ord::{eq, ge, gt, le, lt, ne};
     pub use set::{contains, contains_hashable, contains_ord};
 
+    /*
     /// `str` Predicate factories
     ///
     /// This module contains predicates specific to string handling.
@@ -44,4 +45,5 @@ pub mod predicate {
         #[cfg(feature = "float-cmp")]
         pub use float::is_close;
     }
+    */
 }
