@@ -8,6 +8,8 @@
 
 //! Definition of `Predicate`s for comparisons over `Ord` and `Eq` types.
 
+use std::borrow::Borrow;
+
 use Predicate;
 
 #[derive(Clone, Copy, Debug)]
@@ -26,11 +28,13 @@ pub struct EqPredicate<T> {
     op: EqOps,
 }
 
-impl<T> Predicate<T> for EqPredicate<T>
+impl<T, I> Predicate<I> for EqPredicate<T>
 where
     T: PartialEq,
+    I: Borrow<T>,
 {
-    fn eval(&self, variable: &T) -> bool {
+    fn eval(&self, variable: &I) -> bool {
+        let variable = variable.borrow();
         match self.op {
             EqOps::Equal => variable.eq(&self.constant),
             EqOps::NotEqual => variable.ne(&self.constant),
@@ -49,6 +53,14 @@ where
 /// let predicate_fn = predicate::eq(5);
 /// assert_eq!(true, predicate_fn.eval(&5));
 /// assert_eq!(false, predicate_fn.eval(&10));
+///
+/// let predicate_fn = predicate::eq("Hello World");
+/// assert_eq!(true, predicate_fn.eval("Hello World"));
+/// assert_eq!(false, predicate_fn.eval("Bar"));
+///
+/// let predicate_fn = predicate::eq("Hello World".to_string());
+/// assert_eq!(true, predicate_fn.eval("Hello World"));
+/// assert_eq!(false, predicate_fn.eval("Bar"));
 /// ```
 pub fn eq<T>(constant: T) -> EqPredicate<T>
 where
@@ -100,11 +112,13 @@ pub struct OrdPredicate<T> {
     op: OrdOps,
 }
 
-impl<T> Predicate<T> for OrdPredicate<T>
+impl<T, I> Predicate<I> for OrdPredicate<T>
 where
     T: PartialOrd,
+    I: Borrow<T>,
 {
-    fn eval(&self, variable: &T) -> bool {
+    fn eval(&self, variable: &I) -> bool {
+        let variable = variable.borrow();
         match self.op {
             OrdOps::LessThan => variable.lt(&self.constant),
             OrdOps::LessThanOrEqual => variable.le(&self.constant),
