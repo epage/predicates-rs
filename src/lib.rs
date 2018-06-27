@@ -64,8 +64,8 @@
 //! // returns a `bool`. Implementing a custom `Predicate` still allows all the
 //! // usual combinators of the `Predicate` trait to work!
 //! struct IsTheAnswer;
-//! impl Predicate<i32> for IsTheAnswer {
-//!     fn eval(&self, variable: &i32) -> bool {
+//! impl<'a> Predicate<&'a i32> for IsTheAnswer {
+//!     fn eval(&self, variable: &'a i32) -> bool {
 //!         *variable == 42
 //!     }
 //! }

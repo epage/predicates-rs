@@ -32,7 +32,7 @@ impl FileType {
         Ok(FileType::Symlink)
     }
 
-    fn eval(self, ft: &fs::FileType) -> bool {
+    fn eval(self, ft: fs::FileType) -> bool {
         match self {
             FileType::File => ft.is_file(),
             FileType::Dir => ft.is_dir(),
@@ -81,15 +81,15 @@ impl FileTypePredicate {
     }
 }
 
-impl Predicate<path::Path> for FileTypePredicate {
-    fn eval(&self, path: &path::Path) -> bool {
+impl<'a> Predicate<&'a path::Path> for FileTypePredicate {
+    fn eval(&self, path: &'a path::Path) -> bool {
         let metadata = if self.follow {
             path.metadata()
         } else {
             path.symlink_metadata()
         };
         metadata
-            .map(|m| self.ft.eval(&m.file_type()))
+            .map(|m| self.ft.eval(m.file_type()))
             .unwrap_or(false)
     }
 }

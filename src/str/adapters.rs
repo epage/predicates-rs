@@ -10,23 +10,23 @@ use Predicate;
 #[derive(Clone, Debug)]
 pub struct TrimPredicate<P>
 where
-    P: Predicate<str>,
+    P: for<'a> Predicate<&'a str>,
 {
     p: P,
 }
 
-impl<P> Predicate<str> for TrimPredicate<P>
+impl<'a, P> Predicate<&'a str> for TrimPredicate<P>
 where
-    P: Predicate<str>,
+    P: for<'b> Predicate<&'b str>,
 {
-    fn eval(&self, variable: &str) -> bool {
+    fn eval(&self, variable: &'a str) -> bool {
         self.p.eval(variable.trim())
     }
 }
 
 impl<P> fmt::Display for TrimPredicate<P>
 where
-    P: Predicate<str>,
+    P: for<'a> Predicate<&'a str>,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.p)
@@ -39,25 +39,25 @@ where
 #[derive(Clone, Debug)]
 pub struct Utf8Predicate<P>
 where
-    P: Predicate<str>,
+    P: for<'a> Predicate<&'a str>,
 {
     p: P,
 }
 
-impl<P> Predicate<ffi::OsStr> for Utf8Predicate<P>
+impl<'a, P> Predicate<&'a ffi::OsStr> for Utf8Predicate<P>
 where
-    P: Predicate<str>,
+    P: for<'b> Predicate<&'b str>,
 {
-    fn eval(&self, variable: &ffi::OsStr) -> bool {
+    fn eval(&self, variable: &'a ffi::OsStr) -> bool {
         variable.to_str().map(|s| self.p.eval(s)).unwrap_or(false)
     }
 }
 
-impl<P> Predicate<[u8]> for Utf8Predicate<P>
+impl<'a, P> Predicate<&'a [u8]> for Utf8Predicate<P>
 where
-    P: Predicate<str>,
+    P: for<'b> Predicate<&'b str>,
 {
-    fn eval(&self, variable: &[u8]) -> bool {
+    fn eval(&self, variable: &'a [u8]) -> bool {
         str::from_utf8(variable)
             .map(|s| self.p.eval(s))
             .unwrap_or(false)
@@ -66,7 +66,7 @@ where
 
 impl<P> fmt::Display for Utf8Predicate<P>
 where
-    P: Predicate<str>,
+    P: for<'a> Predicate<&'a str>,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.p)
@@ -74,9 +74,9 @@ where
 }
 
 /// `Predicate` extension adapting a `str` Predicate.
-pub trait PredicateStrExt
+pub trait PredicateStrExt<'a>
 where
-    Self: Predicate<str>,
+    Self: Predicate<&'a str>,
     Self: Sized,
 {
     /// Returns a `TrimPredicate` that ensures the data passed to `Self` is trimmed.
@@ -113,8 +113,8 @@ where
     }
 }
 
-impl<P> PredicateStrExt for P
+impl<'a, P> PredicateStrExt<'a> for P
 where
-    P: Predicate<str>,
+    P: Predicate<&'a str>,
 {
 }

@@ -63,11 +63,11 @@ where
     }
 }
 
-impl<T> Predicate<T> for InPredicate<T>
+impl<'a, T> Predicate<&'a T> for InPredicate<T>
 where
     T: PartialEq + fmt::Debug,
 {
-    fn eval(&self, variable: &T) -> bool {
+    fn eval(&self, variable: &'a T) -> bool {
         self.inner.contains(variable)
     }
 }
@@ -134,11 +134,11 @@ where
     inner: Vec<T>,
 }
 
-impl<T> Predicate<T> for OrdInPredicate<T>
+impl<'a, T> Predicate<&'a T> for OrdInPredicate<T>
 where
     T: Ord + fmt::Debug,
 {
-    fn eval(&self, variable: &T) -> bool {
+    fn eval(&self, variable: &'a T) -> bool {
         self.inner.binary_search(variable).is_ok()
     }
 }
@@ -169,11 +169,11 @@ where
     inner: HashSet<T>,
 }
 
-impl<T> Predicate<T> for HashableInPredicate<T>
+impl<'a, T> Predicate<&'a T> for HashableInPredicate<T>
 where
     T: Hash + Eq + fmt::Debug,
 {
-    fn eval(&self, variable: &T) -> bool {
+    fn eval(&self, variable: &'a T) -> bool {
         self.inner.contains(variable)
     }
 }

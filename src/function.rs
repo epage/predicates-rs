@@ -18,7 +18,7 @@ use Predicate;
 #[derive(Debug)]
 pub struct FnPredicate<F, T>
 where
-    F: Fn(&T) -> bool,
+    F: Fn(T) -> bool,
 {
     function: F,
     name: &'static str,
@@ -27,7 +27,7 @@ where
 
 impl<F, T> FnPredicate<F, T>
 where
-    F: Fn(&T) -> bool,
+    F: Fn(T) -> bool,
 {
     /// Provide a descriptive name for this function.
     ///
@@ -53,16 +53,16 @@ where
 
 impl<F, T> Predicate<T> for FnPredicate<F, T>
 where
-    F: Fn(&T) -> bool,
+    F: Fn(T) -> bool,
 {
-    fn eval(&self, variable: &T) -> bool {
+    fn eval(&self, variable: T) -> bool {
         (self.function)(variable)
     }
 }
 
 impl<F, T> fmt::Display for FnPredicate<F, T>
 where
-    F: Fn(&T) -> bool,
+    F: Fn(T) -> bool,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}(var)", self.name)
@@ -83,17 +83,18 @@ where
 ///     number: i32,
 /// }
 ///
+/// let good_example = Example { string: "hello".into(), number: 42 };
+/// let bad_example = Example { string: "goodbye".into(), number: 0 };
+///
 /// let string_check = predicate::function(|x: &Example| x.string == "hello");
 /// let number_check = predicate::function(|x: &Example| x.number == 42);
 /// let predicate_fn = string_check.and(number_check);
-/// let good_example = Example { string: "hello".into(), number: 42 };
 /// assert_eq!(true, predicate_fn.eval(&good_example));
-/// let bad_example = Example { string: "goodbye".into(), number: 0 };
 /// assert_eq!(false, predicate_fn.eval(&bad_example));
 /// ```
 pub fn function<F, T>(function: F) -> FnPredicate<F, T>
 where
-    F: Fn(&T) -> bool,
+    F: Fn(T) -> bool,
 {
     FnPredicate {
         function: function,

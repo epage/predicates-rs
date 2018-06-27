@@ -64,8 +64,8 @@ impl BinaryFilePredicate {
     }
 }
 
-impl Predicate<path::Path> for BinaryFilePredicate {
-    fn eval(&self, path: &path::Path) -> bool {
+impl<'a> Predicate<&'a path::Path> for BinaryFilePredicate {
+    fn eval(&self, path: &'a path::Path) -> bool {
         self.eval(path).unwrap_or(false)
     }
 }
@@ -118,8 +118,8 @@ impl fmt::Display for StrFilePredicate {
     }
 }
 
-impl Predicate<path::Path> for StrFilePredicate {
-    fn eval(&self, path: &path::Path) -> bool {
+impl<'a> Predicate<&'a path::Path> for StrFilePredicate {
+    fn eval(&self, path: &'a path::Path) -> bool {
         self.eval(path).unwrap_or(false)
     }
 }

@@ -54,11 +54,11 @@ where
     }
 }
 
-impl<P> Predicate<path::Path> for FileContentPredicate<P>
+impl<'a, P> Predicate<&'a path::Path> for FileContentPredicate<P>
 where
     P: Predicate<[u8]>,
 {
-    fn eval(&self, path: &path::Path) -> bool {
+    fn eval(&self, path: &'a path::Path) -> bool {
         self.eval(path).unwrap_or(false)
     }
 }

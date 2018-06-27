@@ -40,8 +40,8 @@ impl RegexPredicate {
     }
 }
 
-impl Predicate<str> for RegexPredicate {
-    fn eval(&self, variable: &str) -> bool {
+impl<'a> Predicate<&'a str> for RegexPredicate {
+    fn eval(&self, variable: &'a str) -> bool {
         self.re.is_match(variable)
     }
 }
@@ -61,8 +61,8 @@ pub struct RegexMatchesPredicate {
     count: usize,
 }
 
-impl Predicate<str> for RegexMatchesPredicate {
-    fn eval(&self, variable: &str) -> bool {
+impl<'a> Predicate<&'a str> for RegexMatchesPredicate {
+    fn eval(&self, variable: &'a str) -> bool {
         self.re.find_iter(variable).count() == self.count
     }
 }

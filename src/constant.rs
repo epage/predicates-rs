@@ -23,7 +23,7 @@ pub struct BooleanPredicate<Item> {
 }
 
 impl<Item> Predicate<Item> for BooleanPredicate<Item> {
-    fn eval(&self, _variable: &Item) -> bool {
+    fn eval(&self, _variable: Item) -> bool {
         self.retval
     }
 }

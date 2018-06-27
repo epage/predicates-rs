@@ -16,8 +16,8 @@ use Predicate;
 #[derive(Copy, Clone, Debug)]
 pub struct IsEmptyPredicate {}
 
-impl Predicate<str> for IsEmptyPredicate {
-    fn eval(&self, variable: &str) -> bool {
+impl<'a> Predicate<&'a str> for IsEmptyPredicate {
+    fn eval(&self, variable: &'a str) -> bool {
         variable.is_empty()
     }
 }
@@ -51,8 +51,8 @@ pub struct StartsWithPredicate {
     pattern: String,
 }
 
-impl Predicate<str> for StartsWithPredicate {
-    fn eval(&self, variable: &str) -> bool {
+impl<'a> Predicate<&'a str> for StartsWithPredicate {
+    fn eval(&self, variable: &'a str) -> bool {
         variable.starts_with(&self.pattern)
     }
 }
@@ -91,7 +91,7 @@ pub struct EndsWithPredicate {
     pattern: String,
 }
 
-impl Predicate<str> for EndsWithPredicate {
+impl<'a> Predicate<&'a str> for EndsWithPredicate {
     fn eval(&self, variable: &str) -> bool {
         variable.ends_with(&self.pattern)
     }
@@ -151,8 +151,8 @@ impl ContainsPredicate {
     }
 }
 
-impl Predicate<str> for ContainsPredicate {
-    fn eval(&self, variable: &str) -> bool {
+impl<'a> Predicate<&'a str> for ContainsPredicate {
+    fn eval(&self, variable: &'a str) -> bool {
         variable.contains(&self.pattern)
     }
 }
@@ -172,8 +172,8 @@ pub struct MatchesPredicate {
     count: usize,
 }
 
-impl Predicate<str> for MatchesPredicate {
-    fn eval(&self, variable: &str) -> bool {
+impl<'a> Predicate<&'a str> for MatchesPredicate {
+    fn eval(&self, variable: &'a str) -> bool {
         variable.matches(&self.pattern).count() == self.count
     }
 }

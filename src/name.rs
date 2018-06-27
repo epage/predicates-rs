@@ -20,7 +20,6 @@ use Predicate;
 pub struct NamePredicate<M, Item>
 where
     M: Predicate<Item>,
-    Item: ?Sized,
 {
     inner: M,
     name: &'static str,
@@ -30,9 +29,8 @@ where
 impl<M, Item> Predicate<Item> for NamePredicate<M, Item>
 where
     M: Predicate<Item>,
-    Item: ?Sized,
 {
-    fn eval(&self, item: &Item) -> bool {
+    fn eval(&self, item: Item) -> bool {
         self.inner.eval(item)
     }
 }
@@ -40,7 +38,6 @@ where
 impl<M, Item> fmt::Display for NamePredicate<M, Item>
 where
     M: Predicate<Item>,
-    Item: ?Sized,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.name)
@@ -48,9 +45,9 @@ where
 }
 
 /// `Predicate` extension that adds naming predicate expressions.
-pub trait PredicateNameExt<Item: ?Sized>
+pub trait PredicateNameExt<Item>
 where
-    Self: Predicate<Item>,
+    Self: Predicate<Item> + Sized,
 {
     /// Name a predicate expression.
     ///
@@ -62,10 +59,7 @@ where
     /// let predicate_fn = predicate::str::is_empty().not().name("non-empty");
     /// println!("{}", predicate_fn);
     /// ```
-    fn name(self, name: &'static str) -> NamePredicate<Self, Item>
-    where
-        Self: Sized,
-    {
+    fn name(self, name: &'static str) -> NamePredicate<Self, Item> {
         NamePredicate {
             inner: self,
             name,
@@ -77,6 +71,5 @@ where
 impl<P, Item> PredicateNameExt<Item> for P
 where
     P: Predicate<Item>,
-    Item: ?Sized,
 {
 }

@@ -19,8 +19,8 @@ pub struct ExistencePredicate {
     exists: bool,
 }
 
-impl Predicate<path::Path> for ExistencePredicate {
-    fn eval(&self, path: &path::Path) -> bool {
+impl<'a> Predicate<&'a path::Path> for ExistencePredicate {
+    fn eval(&self, path: &'a path::Path) -> bool {
         path.exists() == self.exists
     }
 }
