@@ -23,6 +23,10 @@ where
     fn eval(&self, variable: &str) -> bool {
         self.p.eval(variable.trim())
     }
+
+    fn find_case<'a>(&'a self, expected: bool, variable: &str) -> Option<reflection::Case<'a>> {
+        self.p.find_case(expected, variable)
+    }
 }
 
 impl<P> reflection::PredicateReflection for TrimPredicate<P>
@@ -62,6 +66,24 @@ where
     fn eval(&self, variable: &ffi::OsStr) -> bool {
         variable.to_str().map(|s| self.p.eval(s)).unwrap_or(false)
     }
+
+    fn find_case<'a>(
+        &'a self,
+        expected: bool,
+        variable: &ffi::OsStr,
+    ) -> Option<reflection::Case<'a>> {
+        let var_str = variable.to_str();
+        match (expected, var_str) {
+            (_, Some(var_str)) => self.p.find_case(expected, var_str).map(|child| {
+                child.add_product(reflection::Product::new("var as str", var_str.to_owned()))
+            }),
+            (true, None) => None,
+            (false, None) => Some(
+                reflection::Case::new(Some(self), false)
+                    .add_product(reflection::Product::new("error", "Invalid UTF-8 string")),
+            ),
+        }
+    }
 }
 
 impl<P> Predicate<[u8]> for Utf8Predicate<P>
@@ -72,6 +94,20 @@ where
         str::from_utf8(variable)
             .map(|s| self.p.eval(s))
             .unwrap_or(false)
+    }
+
+    fn find_case<'a>(&'a self, expected: bool, variable: &[u8]) -> Option<reflection::Case<'a>> {
+        let var_str = str::from_utf8(variable);
+        match (expected, var_str) {
+            (_, Ok(var_str)) => self.p.find_case(expected, var_str).map(|child| {
+                child.add_product(reflection::Product::new("var as str", var_str.to_owned()))
+            }),
+            (true, Err(_)) => None,
+            (false, Err(err)) => Some(
+                reflection::Case::new(Some(self), false)
+                    .add_product(reflection::Product::new("error", err)),
+            ),
+        }
     }
 }
 
